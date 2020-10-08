@@ -135,7 +135,12 @@ Finally, use `geom_density` to plot the distributions of two states of your choi
 In Scene 1, we called this election simulation function a single time. Now, create a new `tibble` called `elections` with one column, `simulations`, that simulates one election in each of 1000 rows. Finally, use this `elections` object to create a column called `pa_win` that uses a `map` function to figure out whether Trump wins Pennsylvania in each of these simulated elections. Once you've verified that works, take the average of the `pa_win` column to see how likely Trump is to win Pennsylvania across all of these simulations.
 
 ```{r}
-elections <- tibble(simulations = map(rep(1, 1000), simulate_election))
+elections <- tibble(simulations = map(rep(1, 1000), simulate_election)) %>%
+  mutate(pa_win = map_lgl(simulations, ~ .$Pennsylvania > 50)) %>%
+ summarize(mean(pa_win))
+
+elections
+
 ```
 
 
