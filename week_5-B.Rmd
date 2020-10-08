@@ -150,6 +150,17 @@ First, repeat Scene 2 to make a column called `oh_win` that uses a `map` functio
 
 Once that is all done, summarise your dataset to estimate the probabilities of (1) winning PA, (2) winning OH, and (3) winning both.
 
+```{r}
+elections <- tibble(simulations = map(rep(1, 1000), simulate_election)) %>%
+  mutate(pa_win = map_lgl(simulations, ~ .$Pennsylvania > 50),
+         oh_win = map_lgl(simulations, ~ .$Ohio > 50),
+         both = (pa_win & oh_win)) %>%
+  summarize(mean(pa_win), mean(oh_win), mean(both))
+elections
+
+```
+
+
 
 
 ## Scene 4
