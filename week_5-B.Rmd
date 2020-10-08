@@ -111,18 +111,32 @@ simulate_election <- function(n_times) {
 
 ## Scene 1: Challenging Review of Earlier Material
 
-Call the `simulate_election` function to simulate 100 elections and assign the result to an object named `draws`. Print that object out in the console and look at it. How is it formatted? It will have 100 rows and 51 columns. Figure out a way to reformat the dataset so that it has a "state" and a "trump_share" column with only one numerical value printed out per row. That is, instead of this format with 51 columns and so 51 numerical values per row, create a dataset that will have 2 columns and only one numerical value per row. This is convenient because `ggplot` prefers working with data formatted this way (think about it, how would you plot 51 columns on a `ggplot`? Much easier to use a `state` column!). 
+Call the `simulate_election` function to simulate 100 elections and assign the result to an object named `draws`. Print that object out in the console and look at it. How is it formatted? It will have 100 rows and 51 columns. Figure out a way to reformat the dataset so that it has a "state" and a "trump_share" column with only one numerical value printed out per row. That is, instead of this format with 51 columns and so 51 numerical values per row, create a dataset that will have 2 columns and only one numerical value per row. This is convenient because `ggplot` prefers working with data formatted this way (think about it, how would you plot 51 columns on a `ggplot`? Much easier to use a `state` column!).
+
+```{r}
+draws <- simulate_election(n_times = 1000) %>%
+  pivot_longer(cols = everything(), names_to = "state", values_to = "trump_share" ) %>%
+  filter(state == "Florida" | state == "Iowa") %>%
+  ggplot(aes(trump_share, fill = state)) +
+  geom_density(alpha = .5)
+
+draws
+
+
+```
+
 
 Finally, use `geom_density` to plot the distributions of two states of your choice. Make this plot beautiful!
 
 **You should do this in steps. First, create the `draws` object. Second, try to successfully change the format of the dataset. Don't do everything all at once in one long section with many pipes!!**
 
-
-  
 ## Scene 2: Estimating Results from a Single State
 
 In Scene 1, we called this election simulation function a single time. Now, create a new `tibble` called `elections` with one column, `simulations`, that simulates one election in each of 1000 rows. Finally, use this `elections` object to create a column called `pa_win` that uses a `map` function to figure out whether Trump wins Pennsylvania in each of these simulated elections. Once you've verified that works, take the average of the `pa_win` column to see how likely Trump is to win Pennsylvania across all of these simulations.
 
+```{r}
+elections <- tibble(simulations = map(rep(1, 1000), simulate_election))
+```
 
 
 ## Scene 3: Do it again!
